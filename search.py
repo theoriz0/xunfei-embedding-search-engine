@@ -3,6 +3,22 @@ import requests
 import pandas as pd
 import numpy as np
 import ast
+import json
+from Embedding_API import EmbeddingReq
+
+def xunfei_embeddings(text : str):
+  emb = EmbeddingReq(appid="xxx",
+                       api_key="yyy",
+                       api_secret="zzz",
+                       embedding_url=r'https://knowledge-retrieval.cn-huabei-1.xf-yun.com/v1/aiui/embedding/query'
+                       )
+  response = emb.get_Embedding(text)
+  try: 
+    json_arr = response['payload']['text']['vector']
+    return json.loads(json_arr)
+  except:
+    return None
+
 
 def edenai_embeddings(text : str, provider: str):
   """
@@ -47,7 +63,8 @@ def search_subfeature(description: str):
     subfeatures = pd.read_csv('subfeatures_dataset.csv')
     
     # generate an embedding for the input description using the OpenAI provider
-    embed_description = edenai_embeddings(description, 'openai')
+    # embed_description = edenai_embeddings(description, 'openai')
+    embed_description = xunfei_embeddings(description)
     
     results = []
     # iterate over each row in the subfeatures dataset
